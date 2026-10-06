@@ -8,18 +8,18 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(session);
 
   const status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  status.text = "$(sparkle) Code Agent";
-  status.tooltip = "Open Code Agent chat";
-  status.command = "codeAgent.chat.focus";
+  status.text = "$(sparkle) cursor4vscode";
+  status.tooltip = "Open cursor4vscode chat";
+  status.command = "cursor4vscode.chat.focus";
   status.show();
   context.subscriptions.push(status);
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("codeAgent.newChat", () => session?.newChat()),
-    vscode.commands.registerCommand("codeAgent.openInEditor", () => session?.openInEditor()),
-    vscode.commands.registerCommand("codeAgent.signIn", () => session?.signIn()),
-    vscode.commands.registerCommand("codeAgent.signOut", () => session?.signOut()),
-    vscode.commands.registerCommand("codeAgent.selectModel", () => session?.selectModel())
+    vscode.commands.registerCommand("cursor4vscode.newChat", () => session?.newChat()),
+    vscode.commands.registerCommand("cursor4vscode.openInEditor", () => session?.openInEditor()),
+    vscode.commands.registerCommand("cursor4vscode.signIn", () => session?.signIn()),
+    vscode.commands.registerCommand("cursor4vscode.signOut", () => session?.signOut()),
+    vscode.commands.registerCommand("cursor4vscode.selectModel", () => session?.selectModel())
   );
 }
 

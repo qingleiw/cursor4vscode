@@ -4,7 +4,7 @@ import type { HostEvent, HostRequest } from "./protocol";
 
 const port = Number(process.argv[2]);
 if (!Number.isInteger(port) || port <= 0) {
-  console.error("Code Agent host requires a port.");
+  console.error("cursor4vscode host requires a port.");
   process.exit(1);
 }
 
@@ -63,7 +63,7 @@ async function handleLine(line: string): Promise<void> {
     }
     if (request.type === "login") {
       const loggedIn = await (await sdk()).Cursor.auth.login({
-        apiKeyName: "Code Agent",
+        apiKeyName: "cursor4vscode",
         onLoginUrl: (url: string) => emit({ type: "loginUrl", url }),
       });
       emit({

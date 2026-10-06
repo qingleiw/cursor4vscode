@@ -20,7 +20,7 @@ export class ChatSession implements vscode.Disposable {
   private readonly viewProvider: vscode.WebviewViewProvider;
 
   constructor(private readonly context: vscode.ExtensionContext) {
-    const output = vscode.window.createOutputChannel("Code Agent");
+    const output = vscode.window.createOutputChannel("cursor4vscode");
     this.process = new AgentProcess(context.extensionUri.fsPath, output);
     this.process.onDelta = (text) => this.appendDelta(text);
     this.process.onLoginUrl = (url) => {
@@ -41,7 +41,7 @@ export class ChatSession implements vscode.Disposable {
       },
     };
     context.subscriptions.push(
-      vscode.window.registerWebviewViewProvider("codeAgent.chat", this.viewProvider, {
+      vscode.window.registerWebviewViewProvider("cursor4vscode.chat", this.viewProvider, {
         webviewOptions: { retainContextWhenHidden: true },
       })
     );
@@ -49,13 +49,13 @@ export class ChatSession implements vscode.Disposable {
   }
 
   focus(): void {
-    void vscode.commands.executeCommand("codeAgent.chat.focus");
+    void vscode.commands.executeCommand("cursor4vscode.chat.focus");
   }
 
   openInEditor(): void {
     const panel = vscode.window.createWebviewPanel(
-      "codeAgent.chatPanel",
-      "Code Agent",
+      "cursor4vscode.chatPanel",
+      "cursor4vscode",
       vscode.ViewColumn.Beside,
       { enableScripts: true, retainContextWhenHidden: true, localResourceRoots: [this.context.extensionUri] }
     );
@@ -119,7 +119,7 @@ export class ChatSession implements vscode.Disposable {
       if (!picked?.description) {
         return;
       }
-      await vscode.workspace.getConfiguration("codeAgent").update("model", picked.description, vscode.ConfigurationTarget.Global);
+      await vscode.workspace.getConfiguration("cursor4vscode").update("model", picked.description, vscode.ConfigurationTarget.Global);
       await this.process.request("reset");
     });
   }
@@ -245,7 +245,7 @@ export class ChatSession implements vscode.Disposable {
   }
 
   private modelId(): string {
-    return vscode.workspace.getConfiguration("codeAgent").get<string>("model") || "composer-2.5";
+    return vscode.workspace.getConfiguration("cursor4vscode").get<string>("model") || "composer-2.5";
   }
 
   private broadcast(): void {

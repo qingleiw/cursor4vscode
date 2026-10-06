@@ -77,7 +77,7 @@ function renderMessages(messages) {
     row.className = `message ${message.role}${message.pending ? " pending" : ""}`;
     const role = document.createElement("div");
     role.className = "role";
-    role.textContent = message.role === "user" ? "You" : "Code Agent";
+    role.textContent = message.role === "user" ? "You" : "cursor4vscode";
     const bubble = document.createElement("div");
     bubble.className = "bubble";
     bubble.innerHTML = renderMarkdown(message.text || (message.pending ? "…" : ""));

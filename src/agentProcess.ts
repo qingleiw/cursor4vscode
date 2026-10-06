@@ -51,7 +51,7 @@ export class AgentProcess {
   }
 
   dispose(): void {
-    this.rejectAll(new Error("Code Agent host stopped."));
+    this.rejectAll(new Error("cursor4vscode host stopped."));
     this.socket?.destroy();
     this.child?.kill();
     this.socket = undefined;
@@ -70,11 +70,11 @@ export class AgentProcess {
     const address = server.address();
     if (!address || typeof address === "string") {
       server.close();
-      throw new Error("Could not listen for the Code Agent host.");
+      throw new Error("Could not listen for the cursor4vscode host.");
     }
 
     const connected = new Promise<net.Socket>((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("Code Agent host did not connect.")), 20000);
+      const timer = setTimeout(() => reject(new Error("cursor4vscode host did not connect.")), 20000);
       server.once("connection", (socket) => {
         clearTimeout(timer);
         resolve(socket);
@@ -94,7 +94,7 @@ export class AgentProcess {
       this.output.append(chunk.toString());
     });
     this.child.once("exit", (code) => {
-      this.rejectAll(new Error(`Code Agent host exited (${code ?? "unknown"}).`));
+      this.rejectAll(new Error(`cursor4vscode host exited (${code ?? "unknown"}).`));
       this.ready = undefined;
     });
 
@@ -110,7 +110,7 @@ export class AgentProcess {
     this.socket.on("data", (chunk: string) => this.onData(chunk));
     this.socket.on("error", (error) => this.rejectAll(error));
     await new Promise<void>((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error("Code Agent host did not become ready.")), 20000);
+      const timer = setTimeout(() => reject(new Error("cursor4vscode host did not become ready.")), 20000);
       const previous = this.onReady;
       this.onReady = () => {
         clearTimeout(timer);
@@ -163,7 +163,7 @@ export class AgentProcess {
     if (event.ok) {
       waiter.resolve(event);
     } else {
-      waiter.reject(new Error(event.message || "Code Agent request failed."));
+      waiter.reject(new Error(event.message || "cursor4vscode request failed."));
     }
   }
 
@@ -180,7 +180,7 @@ export class AgentProcess {
 }
 
 export function resolveNode(): NodeLaunch {
-  const configured = vscode.workspace.getConfiguration("codeAgent").get<string>("nodePath")?.trim();
+  const configured = vscode.workspace.getConfiguration("cursor4vscode").get<string>("nodePath")?.trim();
   if (configured) {
     return { command: configured, env: { ...process.env } };
   }

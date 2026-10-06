@@ -1,13 +1,13 @@
 {
-  "name": "code-agent",
-  "displayName": "Code Agent",
+  "name": "cursor4vscode",
+  "displayName": "cursor4vscode",
   "description": "Sidebar chat for Cursor models, in the style of Claude Code for VS Code.",
   "version": "0.1.0",
   "publisher": "qingleiw",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qingleiw/code-agent"
+    "url": "https://github.com/qingleiw/cursor4vscode"
   },
   "engines": {
     "vscode": "^1.95.0"
@@ -19,73 +19,73 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "codeAgent",
-          "title": "Code Agent",
+          "id": "cursor4vscode",
+          "title": "cursor4vscode",
           "icon": "media/icon.svg"
         }
       ]
     },
     "views": {
-      "codeAgent": [
+      "cursor4vscode": [
         {
           "type": "webview",
-          "id": "codeAgent.chat",
+          "id": "cursor4vscode.chat",
           "name": "Chat",
-          "contextualTitle": "Code Agent"
+          "contextualTitle": "cursor4vscode"
         }
       ]
     },
     "commands": [
       {
-        "command": "codeAgent.newChat",
+        "command": "cursor4vscode.newChat",
         "title": "New Chat",
-        "category": "Code Agent",
+        "category": "cursor4vscode",
         "icon": "$(add)"
       },
       {
-        "command": "codeAgent.openInEditor",
+        "command": "cursor4vscode.openInEditor",
         "title": "Open in Editor",
-        "category": "Code Agent"
+        "category": "cursor4vscode"
       },
       {
-        "command": "codeAgent.signIn",
+        "command": "cursor4vscode.signIn",
         "title": "Sign In",
-        "category": "Code Agent"
+        "category": "cursor4vscode"
       },
       {
-        "command": "codeAgent.signOut",
+        "command": "cursor4vscode.signOut",
         "title": "Sign Out",
-        "category": "Code Agent"
+        "category": "cursor4vscode"
       },
       {
-        "command": "codeAgent.selectModel",
+        "command": "cursor4vscode.selectModel",
         "title": "Select Model",
-        "category": "Code Agent"
+        "category": "cursor4vscode"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "codeAgent.newChat",
-          "when": "view == codeAgent.chat",
+          "command": "cursor4vscode.newChat",
+          "when": "view == cursor4vscode.chat",
           "group": "navigation"
         },
         {
-          "command": "codeAgent.selectModel",
-          "when": "view == codeAgent.chat",
+          "command": "cursor4vscode.selectModel",
+          "when": "view == cursor4vscode.chat",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "Code Agent",
+      "title": "cursor4vscode",
       "properties": {
-        "codeAgent.model": {
+        "cursor4vscode.model": {
           "type": "string",
           "default": "composer-2.5",
-          "description": "Cursor model id used for chat. Use Code Agent: Select Model to pick from your account."
+          "description": "Cursor model id used for chat. Use cursor4vscode: Select Model to pick from your account."
         },
-        "codeAgent.nodePath": {
+        "cursor4vscode.nodePath": {
           "type": "string",
           "default": "",
           "description": "Optional path to a Node.js 22.13 or newer binary. Leave empty to use Cursor's Node when it is new enough, otherwise node on PATH."

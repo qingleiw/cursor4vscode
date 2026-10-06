@@ -12,12 +12,12 @@ export function chatHtml(webview: vscode.Webview, extensionUri: vscode.Uri): str
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="${styleUri}" />
-  <title>Code Agent</title>
+  <title>cursor4vscode</title>
 </head>
 <body>
   <header class="top">
     <div class="title">
-      <strong>Code Agent</strong>
+      <strong>cursor4vscode</strong>
       <span id="model" class="muted"></span>
     </div>
     <div class="actions">
@@ -28,7 +28,7 @@ export function chatHtml(webview: vscode.Webview, extensionUri: vscode.Uri): str
   <main id="transcript"></main>
   <p id="notice" class="notice" hidden></p>
   <form id="composer">
-    <textarea id="input" rows="3" placeholder="Ask Code Agent…"></textarea>
+    <textarea id="input" rows="3" placeholder="Ask cursor4vscode…"></textarea>
     <div class="composer-row">
       <span id="account" class="muted"></span>
       <button id="submit" type="submit">Send</button>
