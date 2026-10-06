@@ -1,0 +1,110 @@
+{
+  "name": "code-agent",
+  "displayName": "Code Agent",
+  "description": "Sidebar chat for Cursor models, in the style of Claude Code for VS Code.",
+  "version": "0.1.0",
+  "publisher": "qingleiw",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qingleiw/code-agent"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["AI", "Chat"],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeAgent",
+          "title": "Code Agent",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codeAgent": [
+        {
+          "type": "webview",
+          "id": "codeAgent.chat",
+          "name": "Chat",
+          "contextualTitle": "Code Agent"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codeAgent.newChat",
+        "title": "New Chat",
+        "category": "Code Agent",
+        "icon": "$(add)"
+      },
+      {
+        "command": "codeAgent.openInEditor",
+        "title": "Open in Editor",
+        "category": "Code Agent"
+      },
+      {
+        "command": "codeAgent.signIn",
+        "title": "Sign In",
+        "category": "Code Agent"
+      },
+      {
+        "command": "codeAgent.signOut",
+        "title": "Sign Out",
+        "category": "Code Agent"
+      },
+      {
+        "command": "codeAgent.selectModel",
+        "title": "Select Model",
+        "category": "Code Agent"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codeAgent.newChat",
+          "when": "view == codeAgent.chat",
+          "group": "navigation"
+        },
+        {
+          "command": "codeAgent.selectModel",
+          "when": "view == codeAgent.chat",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Agent",
+      "properties": {
+        "codeAgent.model": {
+          "type": "string",
+          "default": "composer-2.5",
+          "description": "Cursor model id used for chat. Use Code Agent: Select Model to pick from your account."
+        },
+        "codeAgent.nodePath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional path to a Node.js 22.13 or newer binary. Leave empty to use Cursor's Node when it is new enough, otherwise node on PATH."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "check": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.95.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "@cursor/sdk": "^1.0.27"
+  }
+}
