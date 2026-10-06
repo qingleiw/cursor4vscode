@@ -1,13 +1,8 @@
 .vscode/**
 src/**
+**/*.ts
+**/*.map
 tsconfig.json
 esbuild.mjs
-**/*.map
-**/*.ts
-node_modules/**
-!node_modules/@cursor/**
-!node_modules/@bufbuild/**
-!node_modules/@connectrpc/**
-!node_modules/zod/**
 .gitignore
-esbuild.mjs
+**/.git/**

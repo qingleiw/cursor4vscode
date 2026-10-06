@@ -1,8 +1,8 @@
 {
   "name": "cursor4vscode",
   "displayName": "cursor4vscode",
-  "description": "Sidebar chat for Cursor models, in the style of Claude Code for VS Code.",
-  "version": "0.1.0",
+  "description": "Secondary-sidebar chat that runs a Cursor agent in the open workspace.",
+  "version": "0.1.11",
   "publisher": "qingleiw",
   "license": "MIT",
   "repository": {
@@ -10,28 +10,33 @@
     "url": "https://github.com/qingleiw/cursor4vscode"
   },
   "engines": {
-    "vscode": "^1.95.0"
+    "vscode": "^1.106.0"
   },
-  "categories": ["AI", "Chat"],
+  "extensionKind": [
+    "workspace"
+  ],
+  "categories": [
+    "AI",
+    "Chat"
+  ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
-      "activitybar": [
+      "secondarySidebar": [
         {
-          "id": "cursor4vscode",
-          "title": "cursor4vscode",
+          "id": "cursor4vscode-side",
+          "title": "Cursor",
           "icon": "media/icon.svg"
         }
       ]
     },
     "views": {
-      "cursor4vscode": [
+      "cursor4vscode-side": [
         {
           "type": "webview",
-          "id": "cursor4vscode.chat",
-          "name": "Chat",
-          "contextualTitle": "cursor4vscode"
+          "id": "cursor4vscode.sideChat",
+          "name": "Cursor"
         }
       ]
     },
@@ -61,22 +66,13 @@
         "command": "cursor4vscode.selectModel",
         "title": "Select Model",
         "category": "cursor4vscode"
+      },
+      {
+        "command": "cursor4vscode.compact",
+        "title": "Compact Conversation",
+        "category": "cursor4vscode"
       }
     ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "cursor4vscode.newChat",
-          "when": "view == cursor4vscode.chat",
-          "group": "navigation"
-        },
-        {
-          "command": "cursor4vscode.selectModel",
-          "when": "view == cursor4vscode.chat",
-          "group": "navigation"
-        }
-      ]
-    },
     "configuration": {
       "title": "cursor4vscode",
       "properties": {
@@ -84,6 +80,12 @@
           "type": "string",
           "default": "composer-2.5",
           "description": "Cursor model id used for chat. Use cursor4vscode: Select Model to pick from your account."
+        },
+        "cursor4vscode.contextWindow": {
+          "type": "number",
+          "default": 200000,
+          "minimum": 1000,
+          "description": "Context window, in tokens, that the context indicator measures against. The Cursor SDK does not report a model's window, so set this to match the model you use."
         },
         "cursor4vscode.nodePath": {
           "type": "string",
@@ -96,15 +98,19 @@
   "scripts": {
     "compile": "node esbuild.mjs",
     "watch": "node esbuild.mjs --watch",
-    "check": "tsc --noEmit -p tsconfig.json"
+    "check": "tsc --noEmit -p tsconfig.json",
+    "vscode:prepublish": "npm run compile",
+    "package": "vsce package --allow-missing-repository"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
     "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.6.0",
     "esbuild": "^0.25.0",
     "typescript": "^5.8.0"
   },
   "dependencies": {
-    "@cursor/sdk": "^1.0.27"
+    "@cursor/sdk": "^1.0.27",
+    "@cursor/sdk-linux-arm64": "1.0.36"
   }
 }

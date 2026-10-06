@@ -2,7 +2,7 @@ import * as cp from "child_process";
 import * as net from "net";
 import * as path from "path";
 import * as vscode from "vscode";
-import type { HostEvent } from "./protocol";
+import type { HostEvent, ToolStatus, ToolView } from "./protocol";
 
 interface Pending {
   resolve: (value: HostEvent & { type: "result" }) => void;
@@ -24,6 +24,11 @@ export class AgentProcess {
   readonly output: vscode.OutputChannel;
 
   onDelta: ((text: string) => void) | undefined;
+  onThinking: ((text: string, durationMs?: number) => void) | undefined;
+  onTool: ((callId: string, status: ToolStatus, view: ToolView) => void) | undefined;
+  onUsage: ((promptTokens: number, requests: number) => void) | undefined;
+  onSummarized: (() => void) | undefined;
+  onStatus: ((status: string, message?: string) => void) | undefined;
   onLoginUrl: ((url: string) => void) | undefined;
 
   constructor(private readonly extensionPath: string, output: vscode.OutputChannel) {
@@ -149,6 +154,26 @@ export class AgentProcess {
     }
     if (event.type === "delta") {
       this.onDelta?.(event.text);
+      return;
+    }
+    if (event.type === "thinking") {
+      this.onThinking?.(event.text, event.durationMs);
+      return;
+    }
+    if (event.type === "tool") {
+      this.onTool?.(event.callId, event.status, event.view);
+      return;
+    }
+    if (event.type === "usage") {
+      this.onUsage?.(event.promptTokens, event.requests);
+      return;
+    }
+    if (event.type === "summarized") {
+      this.onSummarized?.();
+      return;
+    }
+    if (event.type === "status") {
+      this.onStatus?.(event.status, event.message);
       return;
     }
     if (event.type === "loginUrl") {
