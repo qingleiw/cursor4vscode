@@ -3,7 +3,7 @@
   "displayName": "cursor4vscode (Unofficial Cursor Agent Panel)",
   "description": "Unofficial chat panel that runs a Cursor agent in the open folder. Not affiliated with Cursor or Anysphere. The Cursor SDK is downloaded from npm on first use.",
   "version": "0.2.0",
-  "publisher": "qingleiw",
+  "publisher": "qingleiwang",
   "license": "MIT",
   "icon": "media/icon.png",
   "keywords": [
