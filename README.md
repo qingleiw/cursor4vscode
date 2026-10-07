@@ -16,6 +16,12 @@ The panel sits in the secondary side bar, next to Chat. You talk to the agent th
 - Node.js with npm on your PATH, for the one-time SDK download. If the editor's built-in Node.js is older than 22.13, the agent also runs on that Node.js, so it must be 22.13 or newer.
 - With Remote-SSH, WSL or a dev container, both apply to the remote machine: the extension runs where your folder is.
 
+## Where it has been tested
+
+One setup so far: VS Code on Windows, connected over Remote-SSH to a Linux ARM64 machine. The extension, the SDK and the agent all run on the Linux side; Windows only shows the panel.
+
+Nothing in the extension is specific to that platform, and the SDK has builds for Linux, macOS and Windows, so other setups may well work. They have not been tried. That includes opening a local folder on Windows or macOS, where the extension itself would run on that system. If you try one, expect rough edges, and please [report what you find](https://github.com/qingleiw/cursor4vscode/issues).
+
 ## Getting started
 
 1. Open a folder.
