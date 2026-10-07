@@ -585,6 +585,10 @@ function renderMarkdown(source) {
 }
 
 function renderProse(text) {
+  // Formulas are rendered first and set aside behind placeholders, so the Markdown rules below
+  // neither see them nor touch the * and _ inside them.
+  const formulas = [];
+  const source = setAsideMath(text, formulas);
   const blocks = [];
   let list = null;
   let table = [];
@@ -604,7 +608,7 @@ function renderProse(text) {
       quote = [];
     }
   };
-  for (const line of text.split("\n")) {
+  for (const line of source.split("\n")) {
     const bullet = /^\s*[-*]\s+(.*)$/.exec(line);
     const numbered = /^\s*(\d+)[.)]\s+(.*)$/.exec(line);
     if (bullet || numbered) {
@@ -645,7 +649,48 @@ function renderProse(text) {
     }
   }
   flush();
-  return blocks.join("");
+  return blocks.join("").replace(MATH_PLACEHOLDER, (_, index) => formulas[index]);
+}
+
+// A character that does not occur in text, around the index of a formula that was set aside.
+const MATH_MARK = "";
+const MATH_PLACEHOLDER = new RegExp(`${MATH_MARK}(\\d+)${MATH_MARK}`, "g");
+
+// Replaces each formula in the text with a placeholder and adds its rendering to formulas.
+function setAsideMath(text, formulas) {
+  const keep = (tex, display) => {
+    formulas.push(renderMath(tex, display));
+    return `${MATH_MARK}${formulas.length - 1}${MATH_MARK}`;
+  };
+  return text
+    .split(MATH_MARK)
+    .join("")
+    .split(/(`[^`\n]+`)/)
+    .map((part, index) =>
+      // Odd parts are `code spans`, where a dollar sign or a backslash is just that.
+      index % 2
+        ? part
+        : part
+            .replace(/\\\[([\s\S]+?)\\\]/g, (_, tex) => `\n${keep(tex, true)}\n`)
+            .replace(/\$\$([\s\S]+?)\$\$/g, (_, tex) => `\n${keep(tex, true)}\n`)
+            .replace(/\\\((.+?)\\\)/g, (_, tex) => keep(tex, false))
+            // A lone pair of dollar signs is a formula only when what it holds looks like one: "$5 and $10" does not.
+            .replace(/\$(?=\S)([^$\n]*?[\\^_={][^$\n]*?)(?<=\S)\$(?!\d)/g, (_, tex) => keep(tex, false))
+    )
+    .join("");
+}
+
+function renderMath(tex, display) {
+  // The text was escaped for HTML before it got here; KaTeX needs it as written.
+  const source = tex.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&").trim();
+  let html;
+  try {
+    html = katex.renderToString(source, { output: "html", displayMode: display, throwOnError: true });
+  } catch {
+    // Not valid LaTeX, still being written, or KaTeX did not load: show it as written.
+    html = `<code>${tex.trim()}</code>`;
+  }
+  return display ? `<span class="math-block">${html}</span>` : html;
 }
 
 function renderTable(lines) {

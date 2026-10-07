@@ -8,14 +8,18 @@ const LOGO = `<svg class="logo" viewBox="0 0 24 24" aria-hidden="true">
 export function chatHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
   const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", "chat.js"));
   const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", "chat.css"));
+  const mathUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", "katex", "katex.min.js"));
+  const mathStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, "media", "katex", "katex.min.css"));
   const nonce = String(Math.random()).slice(2);
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';" />
+  <!-- KaTeX positions the parts of a formula with style attributes and draws them in its own fonts. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; style-src-attr 'unsafe-inline'; font-src ${webview.cspSource}; script-src 'nonce-${nonce}';" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="${mathStyleUri}" />
   <link rel="stylesheet" href="${styleUri}" />
   <title>Cursor</title>
 </head>
@@ -77,6 +81,7 @@ export function chatHtml(webview: vscode.Webview, extensionUri: vscode.Uri): str
       </div>
     </div>
   </form>
+  <script nonce="${nonce}" src="${mathUri}"></script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;

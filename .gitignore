@@ -1,5 +1,6 @@
 node_modules/
 out/
+media/katex/
 *.vsix
 *.tsbuildinfo
 .vscode-test/

@@ -2,7 +2,7 @@
   "name": "cursor4vscode",
   "displayName": "cursor4vscode",
   "description": "Secondary-sidebar chat that runs a Cursor agent in the open workspace.",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "publisher": "qingleiw",
   "license": "MIT",
   "repository": {
@@ -107,6 +107,7 @@
     "@types/vscode": "^1.95.0",
     "@vscode/vsce": "^3.6.0",
     "esbuild": "^0.25.0",
+    "katex": "^0.19.0",
     "typescript": "^5.8.0"
   },
   "dependencies": {

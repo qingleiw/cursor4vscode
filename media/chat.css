@@ -316,6 +316,22 @@ a:focus-visible {
   overflow-x: auto;
 }
 
+/* A formula on its own line scrolls sideways instead of widening the panel. */
+.math-block {
+  display: block;
+  padding: 2px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.math-block .katex-display {
+  margin: 6px 0;
+}
+
+.bubble .katex {
+  font-size: 1.1em;
+}
+
 .bubble table {
   border-collapse: collapse;
   font-size: 12px;
