@@ -8,6 +8,7 @@ const katex = "node_modules/katex/dist";
 await mkdir("media/katex/fonts", { recursive: true });
 await copyFile(`${katex}/katex.min.js`, "media/katex/katex.min.js");
 await copyFile(`${katex}/katex.min.css`, "media/katex/katex.min.css");
+await copyFile("node_modules/katex/LICENSE", "media/katex/LICENSE");
 for (const font of await readdir(`${katex}/fonts`)) {
   // The stylesheet lists woff2 first, which is the only format a webview asks for.
   if (font.endsWith(".woff2")) {

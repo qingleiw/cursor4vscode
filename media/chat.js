@@ -12,6 +12,8 @@ const notice = document.getElementById("notice");
 const model = document.getElementById("model");
 const account = document.getElementById("account");
 const gate = document.getElementById("gate");
+const setup = document.getElementById("setup");
+const installButton = document.getElementById("installSdk");
 const menu = document.getElementById("menu");
 const context = document.getElementById("context");
 const contextText = document.getElementById("contextText");
@@ -148,6 +150,10 @@ document.getElementById("signIn").addEventListener("click", () => {
   vscode.postMessage({ type: "signIn" });
 });
 
+installButton.addEventListener("click", () => {
+  vscode.postMessage({ type: "installSdk" });
+});
+
 for (const suggestion of document.querySelectorAll(".suggestion")) {
   suggestion.addEventListener("click", () => {
     input.value = suggestion.textContent;
@@ -194,10 +200,15 @@ window.addEventListener("message", (event) => {
   model.textContent = message.model;
   folder.textContent = message.target || "this folder";
   account.textContent = message.account || "";
-  gate.hidden = signedIn;
-  form.hidden = !signedIn;
-  welcome.hidden = !signedIn || messages.length > 0;
-  transcript.hidden = !signedIn || messages.length === 0;
+  // Three screens can stand in for the chat: get the SDK, sign in, or the empty-chat welcome.
+  const usable = message.sdk === "ready" && signedIn;
+  setup.hidden = message.sdk === "ready";
+  installButton.disabled = message.sdk === "installing";
+  installButton.textContent = message.sdk === "installing" ? "Downloading…" : "Download the Cursor SDK";
+  gate.hidden = message.sdk !== "ready" || signedIn;
+  form.hidden = !usable;
+  welcome.hidden = !usable || messages.length > 0;
+  transcript.hidden = !usable || messages.length === 0;
   submit.classList.toggle("busy", busy);
   submit.title = busy ? "Stop" : "Send";
   fitInput();

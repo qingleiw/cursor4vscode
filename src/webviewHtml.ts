@@ -46,6 +46,13 @@ export function chatHtml(webview: vscode.Webview, extensionUri: vscode.Uri): str
     </div>
     <span id="account" class="muted"></span>
   </section>
+  <section id="setup" class="welcome" hidden>
+    ${LOGO}
+    <h2>One step before you start</h2>
+    <p>This panel runs on the Cursor SDK, which is Cursor's own software and is not part of this extension.</p>
+    <p class="fine">It is downloaded from npm to this machine (about 50 MB) and needs Node.js with npm. Using it is subject to Cursor's Terms of Service.</p>
+    <button id="installSdk" type="button" class="primary">Download the Cursor SDK</button>
+  </section>
   <section id="gate" class="welcome" hidden>
     ${LOGO}
     <h2>Sign in to get started</h2>

@@ -173,9 +173,18 @@ a:focus-visible {
   font-weight: 600;
 }
 
+.welcome .fine {
+  font-size: 12px;
+}
+
 .welcome .primary,
 .welcome .muted {
   margin-top: 10px;
+}
+
+.primary:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .suggestions {

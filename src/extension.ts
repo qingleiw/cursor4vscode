@@ -24,6 +24,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("cursor4vscode.signOut", () => session?.signOut()),
     vscode.commands.registerCommand("cursor4vscode.selectModel", () => session?.selectModel()),
     vscode.commands.registerCommand("cursor4vscode.compact", () => session?.compact()),
+    vscode.commands.registerCommand("cursor4vscode.installSdk", () => session?.installSdk()),
     vscode.commands.registerCommand("cursor4vscode.openSession", (id: string) => session?.openSaved(id))
   );
 }

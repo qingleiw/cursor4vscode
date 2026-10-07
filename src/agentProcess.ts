@@ -3,6 +3,7 @@ import * as net from "net";
 import * as path from "path";
 import * as vscode from "vscode";
 import type { HostEvent, ToolStatus, ToolView } from "./protocol";
+import { findSdk, SDK_MISSING } from "./sdk";
 
 interface Pending {
   resolve: (value: HostEvent & { type: "result" }) => void;
@@ -31,8 +32,17 @@ export class AgentProcess {
   onStatus: ((status: string, message?: string) => void) | undefined;
   onLoginUrl: ((url: string) => void) | undefined;
 
-  constructor(private readonly extensionPath: string, output: vscode.OutputChannel) {
+  constructor(
+    private readonly extensionPath: string,
+    private readonly storagePath: string,
+    output: vscode.OutputChannel
+  ) {
     this.output = output;
+  }
+
+  // Where the Cursor SDK is on this machine, if it is here at all.
+  sdkFolder(): string | undefined {
+    return findSdk(this.extensionPath, this.storagePath);
   }
 
   start(): Promise<void> {
@@ -66,6 +76,10 @@ export class AgentProcess {
 
   private async spawn(): Promise<void> {
     const launch = resolveNode();
+    const sdk = this.sdkFolder();
+    if (!sdk) {
+      throw new Error(SDK_MISSING);
+    }
     const script = path.join(this.extensionPath, "out", "agentHost.js");
     const server = net.createServer();
     await new Promise<void>((resolve, reject) => {
@@ -86,7 +100,7 @@ export class AgentProcess {
       });
     });
 
-    this.child = cp.spawn(launch.command, [script, String(address.port)], {
+    this.child = cp.spawn(launch.command, [script, String(address.port), sdk], {
       cwd: this.extensionPath,
       env: launch.env,
       stdio: ["ignore", "pipe", "pipe"],

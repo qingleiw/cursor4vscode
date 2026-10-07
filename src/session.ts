@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { AgentProcess } from "./agentProcess";
 import type { ChatBlock, ChatMessage, ToolStatus, ToolView } from "./protocol";
+import { installSdk, SDK_MISSING } from "./sdk";
 import type { SavedSession } from "./sessionsView";
 import { chatHtml } from "./webviewHtml";
 
@@ -11,6 +12,9 @@ interface Surface {
 
 export class ChatSession implements vscode.Disposable {
   private readonly process: AgentProcess;
+  private readonly output: vscode.OutputChannel;
+  // Whether the Cursor SDK, which the extension does not ship, is on this machine.
+  private sdk: "missing" | "installing" | "ready";
   private readonly surfaces = new Set<Surface>();
   private messages: ChatMessage[] = [];
   private busy = false;
@@ -33,7 +37,9 @@ export class ChatSession implements vscode.Disposable {
     private readonly onSessionsChanged: () => void
   ) {
     const output = vscode.window.createOutputChannel("cursor4vscode");
-    this.process = new AgentProcess(context.extensionUri.fsPath, output);
+    this.output = output;
+    this.process = new AgentProcess(context.extensionUri.fsPath, context.globalStorageUri.fsPath, output);
+    this.sdk = this.process.sdkFolder() ? "ready" : "missing";
     this.process.onDelta = (text) => {
       this.activity = "";
       this.appendDelta(text);
@@ -98,7 +104,31 @@ export class ChatSession implements vscode.Disposable {
         webviewOptions: { retainContextWhenHidden: true },
       })
     );
-    void this.refreshAccount();
+    if (this.sdk === "ready") {
+      void this.refreshAccount();
+    }
+  }
+
+  // Downloads the Cursor SDK to this machine, or brings it up to date.
+  async installSdk(): Promise<void> {
+    if (this.sdk === "installing" || this.busy) {
+      return;
+    }
+    this.sdk = "installing";
+    this.notice = undefined;
+    this.broadcast();
+    try {
+      await installSdk(this.context.globalStorageUri.fsPath, this.output);
+      // A host that is already running has the old copy loaded; the next request starts a new one.
+      this.process.dispose();
+      this.sdk = "ready";
+      await this.refreshAccount();
+    } catch (error) {
+      this.sdk = this.process.sdkFolder() ? "ready" : "missing";
+      this.notice = friendly(error instanceof Error ? error.message : String(error));
+    } finally {
+      this.broadcast();
+    }
   }
 
   focus(): void {
@@ -266,6 +296,11 @@ export class ChatSession implements vscode.Disposable {
       this.broadcast();
       return;
     }
+    if (this.sdk !== "ready") {
+      this.notice = SDK_MISSING;
+      this.broadcast();
+      return;
+    }
     if (!this.account) {
       this.notice = "Sign in to Cursor, then send the message again.";
       this.broadcast();
@@ -403,6 +438,8 @@ export class ChatSession implements vscode.Disposable {
         void this.setModel(message.model);
       } else if (message.type === "compact") {
         void this.compact();
+      } else if (message.type === "installSdk") {
+        void this.installSdk();
       } else if (message.type === "listSessions") {
         this.sendSessions(webview);
       } else if (message.type === "openSession" && message.id) {
@@ -569,6 +606,7 @@ export class ChatSession implements vscode.Disposable {
     void webview.postMessage({
       type: "state",
       session: this.sessionId,
+      sdk: this.sdk,
       title: this.title(),
       messages: this.messages,
       busy: this.busy,

@@ -1,4 +1,7 @@
+import * as fs from "fs";
 import * as net from "net";
+import * as path from "path";
+import { pathToFileURL } from "url";
 import type { Run, SDKAgent } from "@cursor/sdk";
 import type { HostEvent, HostRequest } from "./protocol";
 import { describeTool, toolStatus } from "./toolSummary";
@@ -8,6 +11,19 @@ if (!Number.isInteger(port) || port <= 0) {
   console.error("cursor4vscode host requires a port.");
   process.exit(1);
 }
+
+// The folder whose node_modules holds the Cursor SDK. The extension does not ship the SDK,
+// so it cannot be imported by name from here.
+const sdkFolder = process.argv[3] ?? "";
+if (!sdkFolder) {
+  console.error("cursor4vscode host requires the folder that holds the Cursor SDK.");
+  process.exit(1);
+}
+// The SDK finds its platform package (ripgrep, the sandbox, native parsers) by walking up from the
+// entry script. This script ships with the extension, away from the SDK, so the walk has to start
+// from inside the SDK's folder instead.
+process.argv[1] = path.join(sdkFolder, "node_modules", "@cursor", "sdk", "package.json");
+let loaded: Promise<typeof import("@cursor/sdk")> | undefined;
 
 const socket = net.connect(port, "127.0.0.1");
 let buffer = "";
@@ -46,7 +62,7 @@ void start();
 
 async function start(): Promise<void> {
   try {
-    await import("@cursor/sdk");
+    await sdk();
     emit({ type: "ready" });
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
@@ -325,8 +341,17 @@ async function disposeAgent(): Promise<void> {
   await current?.[Symbol.asyncDispose]();
 }
 
-async function sdk(): Promise<typeof import("@cursor/sdk")> {
-  return import("@cursor/sdk");
+function sdk(): Promise<typeof import("@cursor/sdk")> {
+  loaded ??= import(pathToFileURL(sdkEntry()).href);
+  return loaded;
+}
+
+// The file the SDK's own manifest names for import.
+function sdkEntry(): string {
+  const root = path.join(sdkFolder, "node_modules", "@cursor", "sdk");
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+  const entry = manifest.exports?.["."];
+  return path.join(root, entry?.import ?? entry?.default ?? manifest.main ?? "index.js");
 }
 
 function emit(event: HostEvent): void {
