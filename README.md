@@ -52,6 +52,12 @@ Nothing in the extension is specific to that platform, and the SDK has builds fo
 | `cursor4vscode.nodePath` | Path to a Node.js 22.13 or newer binary, if the editor's own is older. |
 | `cursor4vscode.sdkPath` | A folder that already holds the SDK (`node_modules/@cursor/sdk`), used instead of the downloaded copy. |
 
+## Source code and feedback
+
+The source is on GitHub: <https://github.com/qingleiw/cursor4vscode>
+
+Bugs and suggestions are welcome as [issues](https://github.com/qingleiw/cursor4vscode/issues) there.
+
 ## License
 
 The extension is MIT licensed. It includes [KaTeX](https://katex.org), also MIT. The Cursor SDK is © Anysphere Inc. and is not distributed with this extension.
